@@ -1,0 +1,24 @@
+NAME = tatanga_trainer
+BUILD_DIR = build
+
+SML2_UE_V10_ROM = sml2v10.gb
+SOURCE_FILE = $(NAME).asm
+OBJECT_FILE_NORMAL := $(BUILD_DIR)/patch.o
+OBJECT_FILE_DEBUG := $(BUILD_DIR)/patch-debug.o
+SYM_UE_V10_ROM := $(BUILD_DIR)/$(NAME)_v10.sym
+OUTPUT_UE_V10_ROM_NORMAL := $(NAME)_v10.gb
+OUTPUT_UE_V10_ROM_DEBUG := $(NAME)_v10_debug.gb
+
+all:
+	mkdir -p $(BUILD_DIR)
+	rgbasm -E $(SOURCE_FILE) -o $(OBJECT_FILE_NORMAL)
+	rgbasm -E $(SOURCE_FILE) -o $(OBJECT_FILE_DEBUG) -D DEBUG=1
+	rgblink -n $(SYM_UE_V10_ROM) -O $(SML2_UE_V10_ROM) -o $(OUTPUT_UE_V10_ROM_NORMAL) $(OBJECT_FILE_NORMAL)
+	rgblink -n $(SYM_UE_V10_ROM) -O $(SML2_UE_V10_ROM) -o $(OUTPUT_UE_V10_ROM_DEBUG)  $(OBJECT_FILE_DEBUG)
+	rgbfix -f gh $(OUTPUT_UE_V10_ROM_NORMAL)
+	rgbfix -f gh $(OUTPUT_UE_V10_ROM_DEBUG)
+
+clean:
+	rm -rf $(BUILD_DIR) $(OUTPUT_UE_V10_ROM_NORMAL) $(OUTPUT_UE_V10_ROM_DEBUG)
+
+.PHONY: clean
